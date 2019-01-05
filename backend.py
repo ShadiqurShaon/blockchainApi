@@ -40,3 +40,14 @@ class Blockchain:
         
         return block_hash;
 
+    def add_block_to_chain(self,block,proof):
+        previous_hash = self.last_block.hash
+        if previous_hash != block.previous_hash:
+            return False
+
+        if not self.is_valid_proof(block,proof):
+            return False
+
+        block.hash = proof
+        self.chain.append(block)
+

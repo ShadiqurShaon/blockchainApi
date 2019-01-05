@@ -50,4 +50,29 @@ class Blockchain:
 
         block.hash = proof
         self.chain.append(block)
+        return True
+    
 
+    def is_valid_proof(self,block,block_hash):
+        return (block_hash.startswith('0'*Blockchain.difficulty) and block_hash ==block.compute_hash())
+
+
+    def add_new_transection(self,transection):
+        self.panding_transection.append(transection)
+
+    
+    def mine(self):
+        if not self.panding_transection:
+            return False
+        lastblock = self.last_block
+        newblock = Block(
+            index = lastblock.index + 1,
+            transactions = self.panding_transection,
+            timestamp = time.time(),
+            previous_hash = lastblock.hash
+        )
+
+        proof = self.proof_of_work(newblock)
+        self.add_block_to_chain(newblock,proof)
+        self.panding_transection = []
+        return newblock.index 

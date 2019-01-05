@@ -2,6 +2,9 @@ from hashlib import sha256
 import json
 import time
 
+from flask import Flask, request
+import requests
+
 
 class Block:
     def __init__(self, index, transactions, timestamp, previous_hash):
@@ -76,3 +79,39 @@ class Blockchain:
         self.add_block_to_chain(newblock,proof)
         self.panding_transection = []
         return newblock.index 
+
+
+//this part is for network connection
+
+app =  Flask(__name__)
+
+blockchain = Blockchain()
+@app.route('/new_transaction',methods = ['post'])
+def new_transaction():
+    data = request.get_json()
+    required_fields = ['author','content']
+
+    for field in required_fields:
+        if not data.get(field):
+            return "invalid transection", 404
+    
+    data['timestamp'] = time.time()
+
+    blockchain.add_new_transection(data)
+
+    return "success", 201
+
+@app.route('/chain',methods = ['GET'])
+def get_chain():
+    chain_data = []
+    for block in blockchain.chain:
+        chain_data.append(block.__dict__)
+    return json.dump({"chain":chain_data})
+
+
+@app.route('/mine',methods = ['GET'])
+def mine_pending_trensection():
+    result = blockchain.main()
+    if not result:
+        return "No transection to maie"
+    return "Block #{} is mind.".format(result)

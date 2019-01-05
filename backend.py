@@ -25,4 +25,18 @@ class Blockchain:
         genesis_block = Block(0,[],time.time(),"0")
         genesis_block.hash = genesis_block.compute_hash()
         self.chain.append(genesis_block)
+    
+    def last_block(self):
+        return self.chain[-1]
+
+    difficulty = 2
+
+    def proof_of_work(self,block):
+        block.nonce = 0
+        block_hash = block.compute_hash()
+        while not block_hash.startswith('0'*Blockchain.difficulty):
+            block.nonce+=1
+            block_hash = block.compute_hash()
         
+        return block_hash;
+
